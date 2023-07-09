@@ -1,6 +1,7 @@
 package de.ina.ina_p_platen.login;
 
 import de.ina.ina_p_platen.classes.UserUtils;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,8 +18,6 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-
-        UserUtils.addUserListAndStandardUsers(session);
 
         LoginHelper loginHelper;
         if (session.getAttribute("login-helper") == null)

@@ -40,4 +40,14 @@
         <url-pattern>/shopping-card</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>myInitializationServlet</servlet-name>
+        <servlet-class>de.ina.ina_p_platen.init.InitializeServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>myInitializationServlet</servlet-name>
+        <url-pattern>/initialize</url-pattern>
+    </servlet-mapping>
 </web-app>

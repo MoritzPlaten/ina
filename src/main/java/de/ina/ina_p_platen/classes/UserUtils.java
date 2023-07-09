@@ -1,7 +1,7 @@
 package de.ina.ina_p_platen.classes;
 
 import de.ina.ina_p_platen.login.UserBean;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -19,11 +19,7 @@ public class UserUtils {
 
     public static boolean IsPasswordRight(UserBean user, String dbPassword) {
 
-        if (!Objects.equals(user.getPassword(), dbPassword)) {
-            return false;
-        }
-
-        return true;
+        return Objects.equals(user.getPassword(), dbPassword);
     }
 
     public static String getPasswordFromUserList(ArrayList<UserBean> userList, String username) {
@@ -37,23 +33,25 @@ public class UserUtils {
         return null;
     }
 
-    public static void addUserListAndStandardUsers(HttpSession session) {
+    public static void addUserListAndStandardUsers(ServletContext servletContext) {
 
-        if (session.getAttribute("userList") == null) {
+        synchronized (servletContext) {
+            if (servletContext.getAttribute("userList") == null) {
 
-            ArrayList<UserBean> users = new ArrayList<UserBean>();
+                ArrayList<UserBean> users = new ArrayList<UserBean>();
 
-            UserBean userBean1 = new UserBean();
-            userBean1.setUsername("user1");
-            userBean1.setPassword("pw1");
-            users.add(userBean1);
+                UserBean userBean1 = new UserBean();
+                userBean1.setUsername("user1");
+                userBean1.setPassword("pw1");
+                users.add(userBean1);
 
-            UserBean userBean2 = new UserBean();
-            userBean2.setUsername("user2");
-            userBean2.setPassword("pw2");
-            users.add(userBean2);
+                UserBean userBean2 = new UserBean();
+                userBean2.setUsername("user2");
+                userBean2.setPassword("pw2");
+                users.add(userBean2);
 
-            session.setAttribute("userList", users);
+                servletContext.setAttribute("userList", users);
+            }
         }
     }
 }
