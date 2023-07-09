@@ -59,6 +59,26 @@
         button:hover {
             background-color: #555;
         }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        input[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
     </style>
 
 </head>
@@ -140,7 +160,7 @@
         <td><%= article.getName() %></td>
         <td><%= article.getAmount() %></td>
         <td>
-            <form action="/shopping-card" method="post">
+            <form action="${pageContext.request.contextPath}/shopping-card" method="post">
                 <input type="hidden" name="articleId" value="<%= article.getName() %>">
                 <input type="number" name="quantity" value="1" min="1">
             </form>
@@ -155,13 +175,24 @@
 
 <% } %>
 
+<%-- Artikel hinzufügen, nur für user1 --%>
+
+<div style="height: 40px"></div>
+
 <% if (user != null && user.getUsername() != null && user.getUsername().equals("user1")) { %>
+
+<h2>Artikel hinzufügen</h2>
+
 <form action="${pageContext.request.contextPath}/articles-servlet" method="post">
     <label for="articleName">Artikelname:</label>
-    <input type="text" id="articleName" name="articleName" required><br>
+    <input type="text" id="articleName" name="articleName" required>
+
+    <div style="height: 10px"></div>
 
     <label for="articleAmount">Anzahl:</label>
-    <input type="number" id="articleAmount" name="articleAmount" min="1" required><br>
+    <input type="number" id="articleAmount" name="articleAmount" min="1" required>
+
+    <div style="height: 10px"></div>
 
     <input type="submit" value="Artikel hinzufügen">
 </form>

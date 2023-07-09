@@ -1,7 +1,9 @@
 package de.ina.ina_p_platen.articles;
 
 import de.ina.ina_p_platen.classes.ArticlesUtils;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -11,7 +13,7 @@ import java.util.ArrayList;
 
 public class ArticlesHelper {
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         HttpSession session = request.getSession();
         ServletContext servletContext = request.getServletContext();
@@ -40,7 +42,9 @@ public class ArticlesHelper {
 
                 ArticlesUtils.updateArticleAmount(articles, articleName, articleAmountInt);
                 servletContext.setAttribute("articles", articles);
-                response.sendRedirect(request.getContextPath() + "/articles");
+
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
+                dispatcher.forward(request, response);
             } else {
 
                 ArticleBean articleBean = new ArticleBean();
@@ -49,7 +53,9 @@ public class ArticlesHelper {
 
                 articles.add(articleBean);
                 servletContext.setAttribute("articles", articles);
-                response.sendRedirect(request.getContextPath() + "/articles");
+
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
+                dispatcher.forward(request, response);
             }
         }
     }

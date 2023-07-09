@@ -16,7 +16,7 @@ import java.io.IOException;
 @WebServlet("/articles-servlet")
 public class ArticlesServlet extends HttpServlet {
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         HttpSession session = request.getSession();
 
