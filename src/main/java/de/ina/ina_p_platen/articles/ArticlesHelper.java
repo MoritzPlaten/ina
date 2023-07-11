@@ -1,6 +1,7 @@
 package de.ina.ina_p_platen.articles;
 
 import de.ina.ina_p_platen.classes.ArticlesUtils;
+import de.ina.ina_p_platen.classes.TypUtils;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -25,22 +26,16 @@ public class ArticlesHelper {
 
             ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
 
-            String articleName = request.getParameter("articleName");
-            String articleAmount = request.getParameter("articleAmount");
+            String getArticleName = request.getParameter("articleName");
+            String getArticleAmount = request.getParameter("articleAmount");
 
-            int articleAmountInt = 0; // Standardwert, falls der Parameter nicht vorhanden oder ungültig ist
+            int articleAmount = TypUtils.toInt(getArticleAmount);
 
-            if (articleAmount != null && !articleAmount.isEmpty()) {
-                try {
-                    articleAmountInt = Integer.parseInt(articleAmount);
-                } catch (NumberFormatException e) {
-                    // Fehlerbehandlung, wenn der String keine gültige Zahl ist
-                }
-            }
+            if (ArticlesUtils.isArticleNameExists(articles, getArticleName)) {
 
-            if (ArticlesUtils.isArticleExists(articles, articleName)) {
+                int getArticleID = ArticlesUtils.getArticleIDByName(articles, getArticleName);
 
-                ArticlesUtils.updateArticleAmount(articles, articleName, articleAmountInt);
+                ArticlesUtils.updateArticleAmount(articles, getArticleID, articleAmount);
                 servletContext.setAttribute("articles", articles);
 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
@@ -48,8 +43,9 @@ public class ArticlesHelper {
             } else {
 
                 ArticleBean articleBean = new ArticleBean();
-                articleBean.setName(articleName);
-                articleBean.setAmount(articleAmountInt);
+                articleBean.setID(ArticlesUtils.getNewArticleID(articles));
+                articleBean.setName(getArticleName);
+                articleBean.setAmount(articleAmount);
 
                 articles.add(articleBean);
                 servletContext.setAttribute("articles", articles);

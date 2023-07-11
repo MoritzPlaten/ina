@@ -35,6 +35,10 @@ public class MessageUtils {
             case "passnotright":
                 messageBody = "Das Password ist falsch!";
                 break;
+
+            case "notavailable":
+                messageBody = "Die gewuenschte Anzahl ist nicht verfügbar";
+                break;
         }
 
         return messageBody;

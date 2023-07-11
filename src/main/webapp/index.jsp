@@ -1,6 +1,8 @@
 <%@ page import="de.ina.ina_p_platen.login.UserBean" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="de.ina.ina_p_platen.articles.ArticleBean" %>
+<%@ page import="de.ina.ina_p_platen.classes.MessageUtils" %>
+<%@ page import="java.io.PrintWriter" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -139,10 +141,21 @@
 <div style="height: 60px"></div>
 
 <%
+    PrintWriter writer = response.getWriter();
+
     ServletContext servletContext = request.getServletContext();
     ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
 
+    String messageBody = null;
+    String message = request.getParameter("message");
+    if (message != null) {
+        messageBody = MessageUtils.translateMessage(message);
+    }
 %>
+
+<div style="display: flex;justify-items: center;justify-content: center">
+    <h4 style="color: indianred"><%=messageBody != null ? messageBody : ""%></h4>
+</div>
 
 <% if (articles != null) { %>
 <table>
@@ -151,7 +164,6 @@
         <th>Artikel-Name</th>
         <th>Verfügbare Anzahl</th>
         <th>Ausgewählte Anzahl</th>
-        <th></th>
     </tr>
     </thead>
     <tbody>
@@ -160,13 +172,11 @@
         <td><%= article.getName() %></td>
         <td><%= article.getAmount() %></td>
         <td>
-            <form action="${pageContext.request.contextPath}/shopping-card" method="post">
-                <input type="hidden" name="articleId" value="<%= article.getName() %>">
-                <input type="number" name="quantity" value="1" min="1">
+            <form action="${pageContext.request.contextPath}/shopping-card-servlet" method="post">
+                <input type="hidden" name="articleId<%=article.getID()%>" value="<%=article.getID()%>">
+                <input type="number" name="articleAmount<%=article.getID()%>" value="1" min="1">
+                <input type="submit" value="In den Warenkorb">
             </form>
-        </td>
-        <td>
-            <button type="submit">In den Warenkorb</button>
         </td>
     </tr>
     <% } %>
