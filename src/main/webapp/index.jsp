@@ -141,8 +141,6 @@
 <div style="height: 60px"></div>
 
 <%
-    PrintWriter writer = response.getWriter();
-
     ServletContext servletContext = request.getServletContext();
     ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
 
@@ -172,10 +170,14 @@
         <td><%= article.getName() %></td>
         <td><%= article.getAmount() %></td>
         <td>
-            <form action="${pageContext.request.contextPath}/shopping-card-servlet" method="post">
-                <input type="hidden" name="articleId<%=article.getID()%>" value="<%=article.getID()%>">
-                <input type="number" name="articleAmount<%=article.getID()%>" value="1" min="1">
-                <input type="submit" value="In den Warenkorb">
+
+            <form style="display: grid;" action="${pageContext.request.contextPath}/shopping-card-servlet" method="post">
+                <div style="display: flex; align-items: center;">
+                    <input type="hidden" name="_method" value="ADD">
+                    <input type="hidden" name="articleId<%=article.getID()%>" value="<%=article.getID()%>">
+                    <input style="width: 20%" type="number" name="articleAmount<%=article.getID()%>" value="1" min="1">
+                    <input type="submit" value="In den Warenkorb">
+                </div>
             </form>
         </td>
     </tr>

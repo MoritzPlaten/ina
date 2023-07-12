@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ShoppingCardUtils {
 
@@ -30,5 +31,11 @@ public class ShoppingCardUtils {
 
         ArticleBean article = ArticlesUtils.getArticleByID(shoppingCard, articleId);
         return article != null;
+    }
+
+    public static void deleteArticleByID(ArrayList<ArticleBean> inputList, int articleId) {
+
+        ArticleBean article = ArticlesUtils.getArticleByID(inputList, articleId);
+        inputList.remove(article);
     }
 }

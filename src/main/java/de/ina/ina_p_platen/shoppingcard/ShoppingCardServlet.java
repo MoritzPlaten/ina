@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 @WebServlet("/shopping-card-servlet")
 public class ShoppingCardServlet extends HttpServlet {
@@ -26,6 +27,18 @@ public class ShoppingCardServlet extends HttpServlet {
         else
             articlesHelper = (ShoppingCardHelper)session.getAttribute("shopping-card-helper");
 
-        articlesHelper.doPost(request, response);
+        Enumeration<String> parameterNames = request.getParameterNames();
+
+        switch (request.getParameter(parameterNames.nextElement())) {
+
+            case "ADD":
+                articlesHelper.doPost(request, response);
+                break;
+
+            case "DELETE":
+                articlesHelper.doDelete(request, response);
+                break;
+
+        }
     }
 }
