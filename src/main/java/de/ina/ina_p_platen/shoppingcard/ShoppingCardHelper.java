@@ -4,6 +4,8 @@ import de.ina.ina_p_platen.articles.ArticleBean;
 import de.ina.ina_p_platen.classes.ArticlesUtils;
 import de.ina.ina_p_platen.classes.ShoppingCardUtils;
 import de.ina.ina_p_platen.classes.TypUtils;
+import de.ina.ina_p_platen.login.UserBean;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -48,7 +50,8 @@ public class ShoppingCardHelper {
             if (!ShoppingCardUtils.isArticleAvailable(articles, articleID, desiredAmount)) {
 
                 error = true;
-                response.sendRedirect(request.getContextPath() + "/articles?message=notavailable");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/articles?message=notavailable");
+                dispatcher.forward(request, response);
             }
 
             //Wenn der Artikel in dem Warenkorb ist + kein Fehler aufgetreten ist
@@ -65,7 +68,8 @@ public class ShoppingCardHelper {
                 ArticlesUtils.updateArticleAmount(shoppingCard, articleID, newAmountInShoppingCard);
                 session.setAttribute("shopping-card", shoppingCard);
 
-                response.sendRedirect(request.getContextPath() + "/articles");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
+                dispatcher.forward(request, response);
             }
             // Wenn der Artikel nicht im Warenkorb vorhanden ist + kein Fehler aufgetreten ist
             else if (!ShoppingCardUtils.isArticleInShoppingCard(shoppingCard, articleID) && !error) {
@@ -83,7 +87,8 @@ public class ShoppingCardHelper {
                 shoppingCard.add(addArticle);
 
                 session.setAttribute("shopping-card", shoppingCard);
-                response.sendRedirect(request.getContextPath() + "/articles");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
+                dispatcher.forward(request, response);
             }
         }
     }
@@ -116,7 +121,44 @@ public class ShoppingCardHelper {
 
             ArticlesUtils.updateArticleAmount(articles, articleID, articleInArticle.getAmount() + articleInShoppingCard.getAmount());
             servletContext.setAttribute("articles", articles);
-            response.sendRedirect(request.getContextPath() + "/shopping-card");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/shopping-card");
+            dispatcher.forward(request, response);
+        }
+    }
+
+    public void doBuy(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+        HttpSession session = request.getSession();
+        ServletContext servletContext = request.getServletContext();
+
+        if (session.getAttribute("shopping-card-helper") == null)
+            session.setAttribute("shopping-card-helper", this);
+
+        synchronized (servletContext) {
+
+            ArrayList<ArticleBean> shoppingCard = (ArrayList<ArticleBean>) session.getAttribute("shopping-card");
+            //ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
+
+            ArrayList<ArticleBean> removeArticles = new ArrayList<>();
+
+            for (ArticleBean article : shoppingCard) {
+
+                int articleID = article.getID();
+
+                ArticleBean articleInShoppingCard = ArticlesUtils.getArticleByID(shoppingCard, articleID);
+                //ArticleBean articleInArticle = ArticlesUtils.getArticleByID(articles, articleID);
+
+                //ShoppingCardUtils.deleteArticleByID(shoppingCard, articleID);
+                removeArticles.add(articleInShoppingCard);
+                //ArticlesUtils.updateArticleAmount(articles, articleID, articleInArticle.getAmount() + articleInShoppingCard.getAmount());
+            }
+
+            shoppingCard.removeAll(removeArticles);
+
+            session.setAttribute("shopping-card", shoppingCard);
+            //servletContext.setAttribute("articles", articles);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/articles?message=buyed");
+            dispatcher.forward(request, response);
         }
     }
 }

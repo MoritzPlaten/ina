@@ -1,5 +1,6 @@
 <%@ page import="de.ina.ina_p_platen.articles.ArticleBean" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="de.ina.ina_p_platen.login.UserBean" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -83,41 +84,89 @@
 </head>
 <body>
 
+    <%-- Hinzufügen der Toolbar --%>
+
     <jsp:include page="/snippets/Toolbar.jsp" />
 
     <%
+        //Warenkorb und aktuellen User abfragen
         ArrayList<ArticleBean> shoppingCard = (ArrayList<ArticleBean>) session.getAttribute("shopping-card");
+
+        HttpSession getSession = request.getSession();
+        UserBean user = (UserBean) getSession.getAttribute("user");
     %>
 
+    <%-- Warenkorb ist gefüllt und vorhanden --%>
     <% if (shoppingCard != null && !shoppingCard.isEmpty()) { %>
-    <table>
-        <thead>
-        <tr>
-            <th>Artikel-Name</th>
-            <th>Verfügbare Anzahl</th>
-            <th>Ausgewählte Anzahl</th>
-        </tr>
-        </thead>
-        <tbody>
-        <% for (ArticleBean article : shoppingCard) { %>
-        <tr>
-            <td><%= article.getName() %></td>
-            <td><%= article.getAmount() %></td>
-            <td>
 
+        <%-- Wenn User angemeldet ist, soll ein Kauf-Button existieren --%>
+        <% if (user != null) { %>
+
+        <div style="height: 30px"></div>
+
+        <div style="display: flex;justify-items: flex-end;justify-content: flex-end">
+
+            <div>
+                <h4>Kaufe jetzt den Warenkorb!</h4>
                 <form style="display: grid;" action="${pageContext.request.contextPath}/shopping-card-servlet" method="post">
-                    <div style="display: flex; align-items: center;">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <input type="hidden" name="articleId<%=article.getID()%>" value="<%=article.getID()%>">
-                        <input type="submit" value="Delete">
-                    </div>
+                    <input type="hidden" name="_method" value="BUY">
+                    <input type="submit" value="Kaufen">
                 </form>
-            </td>
-        </tr>
-        <% } %>
-        </tbody>
-    </table>
+            </div>
+            <div style="width: 100px"></div>
+        </div>
 
+        <%-- Wenn der User nicht angemeldet ist --%>
+        <% } else { %>
+
+        <div style="height: 10px"></div>
+
+        <div style="display: flex;justify-items: flex-end;justify-content: flex-end">
+
+            <div>
+                <a style="border: 2px black solid;border-radius: 20px;background-color: darkslategrey;text-decoration: none;color: white;padding: 10px;padding-left: 20px;padding-right: 20px;font-family: Bahnschrift, sans-serif" href="${pageContext.request.contextPath}/login">Zum Login</a>
+            </div>
+            <div style="width: 30px;"></div>
+        </div>
+
+        <div style="display: flex;justify-content: center;justify-items: center">
+            <h3>Sie müssen sich anmelden, um den Warenkorb zu kaufen!</h3>
+        </div>
+        <% } %>
+
+        <div style="height: 20px"></div>
+
+        <%-- Artikelliste --%>
+        <table>
+            <thead>
+            <tr>
+                <th>Artikel-Name</th>
+                <th>Verfügbare Anzahl</th>
+                <th>Ausgewählte Anzahl</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (ArticleBean article : shoppingCard) { %>
+            <tr>
+                <td><%= article.getName() %></td>
+                <td><%= article.getAmount() %></td>
+                <td>
+
+                    <%-- Artikel in den Warenkorb hinzufügen --%>
+                    <form style="display: grid;" action="${pageContext.request.contextPath}/shopping-card-servlet" method="post">
+                        <div style="display: flex; align-items: center;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="articleId<%=article.getID()%>" value="<%=article.getID()%>">
+                            <input type="submit" value="Delete">
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+
+    <%-- Wenn der Warenkorb leer oder nicht vorhanden ist --%>
     <% } else { %>
 
     <div style="display: flex;justify-content: center;justify-items: center">

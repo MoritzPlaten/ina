@@ -8,6 +8,11 @@ import java.util.Objects;
 
 public class UserUtils {
 
+    /**
+     * @param userList Die Liste in der gesucht wird
+     * @param username Der Username der überprüft werden soll
+     * @return Ein boolean, der angibt, ob der User existiert oder nicht
+     */
     public static boolean isUserExists(ArrayList<UserBean> userList, String username) {
         for (UserBean user : userList) {
             if (user.getUsername().equals(username)) {
@@ -17,11 +22,22 @@ public class UserUtils {
         return false;
     }
 
+    /**
+     * @param user Der Benutzer dessen Password überprüft werden soll
+     * @param dbPassword Das Confirm-Password welches überprüft werden soll
+     * @return Ein boolean, der angibt, ob Password und Confirm-Password übereinstimmen
+     */
     public static boolean IsPasswordRight(UserBean user, String dbPassword) {
 
         return Objects.equals(user.getPassword(), dbPassword);
     }
 
+
+    /**
+     * @param userList Die Liste die benutzt werden soll
+     * @param username Der Username vom Benutzer, wovon man das Password haben möchte
+     * @return Das Password vom Nutzer mit dem Username
+     */
     public static String getPasswordFromUserList(ArrayList<UserBean> userList, String username) {
         if (userList != null) {
             for (UserBean user : userList) {
@@ -33,6 +49,9 @@ public class UserUtils {
         return null;
     }
 
+    /**
+     * @param servletContext ServletContext
+     */
     public static void addUserListAndStandardUsers(ServletContext servletContext) {
 
         synchronized (servletContext) {

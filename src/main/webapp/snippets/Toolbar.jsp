@@ -1,3 +1,4 @@
+<%-- Toolbar --%>
 <div style="display: flex;align-content: space-between;justify-content: space-between;border-bottom: black;border-bottom-width: thin;width: 100%">
 
     <div style="display: flex;justify-content: center;justify-items: center">

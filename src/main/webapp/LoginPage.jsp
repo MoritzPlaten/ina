@@ -1,4 +1,5 @@
 <%@ page import="de.ina.ina_p_platen.classes.MessageUtils" %>
+<%@ page import="de.ina.ina_p_platen.classes.Message" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -66,13 +67,15 @@
 <body>
 
     <%
-        String messageBody = null;
+        //Benachrichtigungen werden hier abgefangen
+        Message messageBody = null;
         String message = request.getParameter("message");
         if (message != null) {
             messageBody = MessageUtils.translateMessage(message);
         }
     %>
 
+    <%-- Einbinden der Toolbar --%>
     <jsp:include page="/snippets/Toolbar.jsp" />
 
     <div style="height: 40px"></div>
@@ -82,10 +85,13 @@
 
     <div style="height: 10px"></div>
 
+    <%-- Benachrichtigung werden hier angezeigt --%>
     <div style="display: flex;justify-items: center;justify-content: center">
-        <h4 style="color: indianred"><%=messageBody != null ? messageBody : ""%></h4>
+        <h4 style="color: indianred"><%=messageBody != null && messageBody.isError() ? messageBody.getMessage() : ""%></h4>
+        <h4 style="color: seagreen"><%=messageBody != null && !messageBody.isError() ? messageBody.getMessage() : ""%></h4>
     </div>
 
+    <%-- Login-Formular --%>
     <div style="width: 100%;display: flex;justify-items: center;justify-content: center">
 
         <div class="container">
@@ -93,6 +99,7 @@
             <h1>Login</h1>
 
             <form action="${pageContext.request.contextPath}/login-servlet" method="POST">
+                <input type="hidden" name="_method" value="LOGIN">
                 <div class="form-group">
                     <label for="username">Benutzername</label>
                     <input type="text" id="username" name="username" required>
@@ -107,6 +114,7 @@
             </form>
         </div>
 </div>
+
 <div style="height: 40px"></div>
 
 </body>

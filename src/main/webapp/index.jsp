@@ -3,6 +3,7 @@
 <%@ page import="de.ina.ina_p_platen.articles.ArticleBean" %>
 <%@ page import="de.ina.ina_p_platen.classes.MessageUtils" %>
 <%@ page import="java.io.PrintWriter" %>
+<%@ page import="de.ina.ina_p_platen.classes.Message" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -101,14 +102,19 @@
         <a style="font-family: Bahnschrift,sans-serif;margin: auto;color: black;text-decoration: none;padding: 10px;padding-right: 15px;padding-left: 15px;background-color: white;border: black 2px solid;border-radius: 20px" href="${pageContext.request.contextPath}/shopping-card">Warenkorb</a>
         <div style="width: 15px"></div>
         <%
-            UserBean user = (UserBean) session.getAttribute("user");
+            HttpSession getSession = request.getSession();
+            UserBean user = (UserBean) getSession.getAttribute("user");
 
             if (user == null) {
         %>
             <a style="font-family: Bahnschrift,sans-serif;margin: auto;color: white;text-decoration: none;padding: 10px;padding-right: 15px;padding-left: 15px;background-color: darkslategrey;border: black 2px solid;border-radius: 20px" href="${pageContext.request.contextPath}/register">Registrieren</a>
             <div style="width: 20px"></div>
         <% } else {%>
-            <form style="display: flex;justify-content: center;justify-items: center" method="get" action="<% session.setAttribute("user", null); %>">
+
+            <%-- Logout Button --%>
+
+            <form style="display: flex;justify-content: center;justify-items: center" method="post" action="${pageContext.request.contextPath}/login-servlet">
+                <input type="hidden" name="_method" value="LOGOUT">
                 <input style="font-family: Bahnschrift,sans-serif;margin: auto;color: black;text-decoration: none;padding: 10px;padding-right: 15px;padding-left: 15px;background-color: white;border: black 2px solid;border-radius: 20px" value="Logout" type="submit">
             </form>
             <div style="width: 15px"></div>
@@ -144,18 +150,24 @@
     ServletContext servletContext = request.getServletContext();
     ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
 
-    String messageBody = null;
+    //Hier werden die Benachrichtigungen abgefangen
+    Message messageBody = null;
     String message = request.getParameter("message");
     if (message != null) {
         messageBody = MessageUtils.translateMessage(message);
     }
 %>
 
+<%-- Hier werden die Benachrichtigung ausgegeben --%>
 <div style="display: flex;justify-items: center;justify-content: center">
-    <h4 style="color: indianred"><%=messageBody != null ? messageBody : ""%></h4>
+    <h4 style="color: indianred"><%=messageBody != null && messageBody.isError() ? messageBody.getMessage() : ""%></h4>
+    <h4 style="color: seagreen"><%=messageBody != null && !messageBody.isError() ? messageBody.getMessage() : ""%></h4>
 </div>
 
+<%-- Artikelliste anzeigen, wenn Artikel vorhanden sind --%>
 <% if (articles != null) { %>
+
+<%-- Artikelliste --%>
 <table>
     <thead>
     <tr>
@@ -191,6 +203,7 @@
 
 <div style="height: 40px"></div>
 
+<%-- Artikel hinzufügen, kann nur user1 --%>
 <% if (user != null && user.getUsername() != null && user.getUsername().equals("user1")) { %>
 
 <h2>Artikel hinzufügen</h2>

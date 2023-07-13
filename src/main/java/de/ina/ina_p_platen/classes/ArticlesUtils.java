@@ -8,6 +8,9 @@ import java.util.Objects;
 
 public class ArticlesUtils {
 
+    /**
+     * @param servletContext Den ServletContext
+     */
     public static void addStandardArticles(ServletContext servletContext) {
 
         synchronized (servletContext) {
@@ -51,6 +54,11 @@ public class ArticlesUtils {
         }
     }
 
+    /**
+     * @param inputList Die Liste in welcher gesucht wird
+     * @param articleName Der Artikel der geprüft werden soll
+     * @return
+     */
     public static boolean isArticleNameExists(ArrayList<ArticleBean> inputList, String articleName) {
         for (ArticleBean article : inputList) {
             if (article.getName().equals(articleName)) {
@@ -60,6 +68,11 @@ public class ArticlesUtils {
         return false; // Artikel nicht gefunden
     }
 
+    /**
+     * @param inputList Die Liste in der gesucht werden soll
+     * @param articleID Die Artikel ID des Artikel, wo die Anzahl geändert werden soll
+     * @param newAmount Die neue Anzahl des Artikels setzen
+     */
     public static void updateArticleAmount(ArrayList<ArticleBean> inputList, int articleID, int newAmount) {
         for (ArticleBean article : inputList) {
             if (article.getID() == articleID) {
@@ -69,6 +82,11 @@ public class ArticlesUtils {
         }
     }
 
+    /**
+     * @param articleList Die Liste in welcher gesucht werden soll
+     * @param articleName Der Artikel Name, von der die ID herausgesucht werden soll
+     * @return Die ID des Artikel
+     */
     public static int getArticleIDByName(ArrayList<ArticleBean> articleList, String articleName) {
 
         int articleID = -1;
@@ -83,6 +101,10 @@ public class ArticlesUtils {
         return articleID;
     }
 
+    /**
+     * @param articleList Die Liste die benutzt werden soll
+     * @return Eine Artikel ID, welche in dieser Liste noch nicht existiert.
+     */
     public static int getNewArticleID(ArrayList<ArticleBean> articleList) {
 
         int generatedID = 0;
@@ -94,6 +116,11 @@ public class ArticlesUtils {
         return generatedID;
     }
 
+    /**
+     * @param articleList Die Liste in der gesucht werden soll
+     * @param id Die Artikel ID die gesucht werden soll
+     * @return Ein boolean, der zurück gibt, ob die ID vorhanden ist
+     */
     public static boolean isIDAvailable(ArrayList<ArticleBean> articleList, int id) {
 
         boolean isAvailable = false;
@@ -108,6 +135,11 @@ public class ArticlesUtils {
         return isAvailable;
     }
 
+    /**
+     * @param articles Die Liste die benutzt werden soll
+     * @param id Die Artikel ID, von dem Artikel, welcher sich geholt werden soll.
+     * @return Der Artikel, der zur Artikel ID passt oder null;
+     */
     public static ArticleBean getArticleByID(ArrayList<ArticleBean> articles, int id) {
 
         ArticleBean output = null;

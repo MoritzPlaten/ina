@@ -1,4 +1,5 @@
 <%@ page import="de.ina.ina_p_platen.classes.MessageUtils" %>
+<%@ page import="de.ina.ina_p_platen.classes.Message" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -67,13 +68,15 @@
 <body>
 
     <%
-        String messageBody = null;
+        // Benachrichtigung von der Registierung
+        Message messageBody = null;
         String message = request.getParameter("message");
         if (message != null) {
             messageBody = MessageUtils.translateMessage(message);
         }
     %>
 
+    <%-- Import Toolbar --%>
     <jsp:include page="/snippets/Toolbar.jsp" />
 
     <div style="height: 40px"></div>
@@ -83,9 +86,13 @@
 
     <div style="height: 10px"></div>
 
+    <%-- Benachrichtigung von der Registrierung werden hier angezeigt --%>
     <div style="display: flex;justify-items: center;justify-content: center">
-        <h4 style="color: indianred"><%=messageBody != null ? messageBody : ""%></h4>
+        <h4 style="color: indianred"><%=messageBody != null && messageBody.isError() ? messageBody.getMessage() : ""%></h4>
+        <h4 style="color: seagreen"><%=messageBody != null && !messageBody.isError() ? messageBody.getMessage() : ""%></h4>
     </div>
+
+    <%-- Registierungsformular --%>
 
     <div style="width: 100%;display: flex;justify-items: center;justify-content: center">
 
@@ -112,6 +119,7 @@
             </form>
         </div>
     </div>
+
     <div style="height: 40px"></div>
 
 </body>

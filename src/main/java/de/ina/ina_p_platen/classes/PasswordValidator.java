@@ -2,6 +2,10 @@ package de.ina.ina_p_platen.classes;
 
 public class PasswordValidator {
 
+    /**
+     * @param password Das Password welches validiert werden soll
+     * @return Ein boolean, der angibt ob das Password sicher genug ist
+     */
     public static boolean validate(String password) {
         if (password == null || password.isEmpty()) {
             return false;
@@ -35,6 +39,10 @@ public class PasswordValidator {
         return true;
     }
 
+    /**
+     * @param password Das Password welches überprüft werden soll
+     * @return Ein boolean, der angibt ob in dem Password ein Großbuchstabe besitzt
+     */
     private static boolean containsUppercase(String password) {
         for (char c : password.toCharArray()) {
             if (Character.isUpperCase(c)) {
@@ -44,6 +52,10 @@ public class PasswordValidator {
         return false;
     }
 
+    /**
+     * @param password Das Password welches überprüft werden soll
+     * @return Ein boolean, der angibt ob in dem Password ein Kleinbuchstaben besitzt
+     */
     private static boolean containsLowercase(String password) {
         for (char c : password.toCharArray()) {
             if (Character.isLowerCase(c)) {
@@ -53,6 +65,10 @@ public class PasswordValidator {
         return false;
     }
 
+    /**
+     * @param password Das Password welches überprüft werden soll
+     * @return Ein boolean, der angibt ob in dem Password eine Zahl besitzt
+     */
     private static boolean containsDigit(String password) {
         for (char c : password.toCharArray()) {
             if (Character.isDigit(c)) {
@@ -62,6 +78,10 @@ public class PasswordValidator {
         return false;
     }
 
+    /**
+     * @param password Das Password welches überprüft werden soll
+     * @return Ein boolean, der angibt ob in dem Password eine Sonderzeichen besitzt
+     */
     private static boolean containsSpecialCharacter(String password) {
         String specialCharacters = "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?";
         for (char c : password.toCharArray()) {

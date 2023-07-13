@@ -1,43 +1,59 @@
 package de.ina.ina_p_platen.classes;
 
+import java.util.ArrayList;
+
+/**
+ * Soll die Benachrichtigungen in volle Sätze umwandeln
+ *
+ * @author Moritz
+ * */
 public class MessageUtils {
 
-    public static String translateMessage(String message) {
+    /**
+     * @param message Die Message, die sie in vollen Sätzen ausgeben mächten
+     * @return Die Nachricht mit einem boolean, ob es sich um ein Error oder um Kein-Error Nachricht handelt
+     */
+    public static Message translateMessage(String message) {
 
-        String messageBody = null;
+        Message messageBody = null;
+
 
         switch (message) {
 
             case "exists":
-                messageBody = "Benutzername existiert bereits!";
+                messageBody = new Message("Benutzername existiert bereits!", true);
                 break;
 
             case "pass":
-                messageBody = "Das Password muss min. 8 Zeichen, ein Großbuchstaben, ein Kleinbuchstaben, min. eine Ziffer, min. ein Sonderzeichen besitzen!";
+                messageBody = new Message("Das Password muss min. 8 Zeichen, ein Großbuchstaben, ein Kleinbuchstaben, min. eine Ziffer, min. ein Sonderzeichen besitzen!", true);
                 break;
 
             case "successRegister":
-                messageBody = "Sie haben sich erfolgreich Registriert!";
+                messageBody = new Message("Sie haben sich erfolgreich Registriert!", false);
                 break;
 
             case "notconfirm":
-                messageBody = "'Password' und 'Password bestaetigen' stimmen nicht ueber ein!";
+                messageBody = new Message("'Password' und 'Password bestaetigen' stimmen nicht ueber ein!", true);
                 break;
 
             case "alreadylogin":
-                messageBody = "Sie sind bereits angemeldet!";
+                messageBody = new Message("Sie sind bereits angemeldet!", true);
                 break;
 
             case "notexists":
-                messageBody = "Diesen Username gibt es nicht!";
+                messageBody = new Message("Diesen Username gibt es nicht!", true);
                 break;
 
             case "passnotright":
-                messageBody = "Das Password ist falsch!";
+                messageBody = new Message("Das Password ist falsch!", true);
                 break;
 
             case "notavailable":
-                messageBody = "Die gewuenschte Anzahl ist nicht verfügbar";
+                messageBody = new Message("Die gewuenschte Anzahl ist nicht verfügbar!", true);
+                break;
+
+            case "buyed":
+                messageBody = new Message("Sie haben erfolgreich eingekauft!", false);
                 break;
         }
 

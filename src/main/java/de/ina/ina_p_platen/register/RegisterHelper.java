@@ -3,7 +3,9 @@ package de.ina.ina_p_platen.register;
 import de.ina.ina_p_platen.classes.PasswordValidator;
 import de.ina.ina_p_platen.classes.UserUtils;
 import de.ina.ina_p_platen.login.UserBean;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -14,7 +16,7 @@ import java.util.Objects;
 
 public class RegisterHelper {
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         HttpSession session = request.getSession();
         ServletContext servletContext = request.getServletContext();
@@ -33,7 +35,8 @@ public class RegisterHelper {
             boolean error = false;
             if (!Objects.equals(password, passwordConfirm)) {
                 error = true;
-                response.sendRedirect(request.getContextPath() + "/register?message=notconfirm");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/register?message=notconfirm");
+                dispatcher.forward(request, response);
             }
 
             UserBean user = new UserBean();
@@ -44,7 +47,8 @@ public class RegisterHelper {
 
                 //Wenn User existiert, dann sag dem User bescheid
                 error = true;
-                response.sendRedirect(request.getContextPath() + "/register?message=exists");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/register?message=exists");
+                dispatcher.forward(request, response);
             }
 
             //Password validation
@@ -53,14 +57,16 @@ public class RegisterHelper {
                 //Wenn Password schwach ist, dann sag dem User bescheid
                 //Wurde implementiert für ein weiteres Feature
                 error = true;
-                response.sendRedirect(request.getContextPath() + "/register?message=pass");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/register?message=pass");
+                dispatcher.forward(request, response);
             }
 
             //Wenn kein Fehler aufgetreten ist => User adden + User zum Login schicken
             if (!error) {
                 users.add(user);
                 session.setAttribute("userList", users);
-                response.sendRedirect(request.getContextPath() + "/login?message=successRegister");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/login?message=successRegister");
+                dispatcher.forward(request, response);
             }
         }
     }

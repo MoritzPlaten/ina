@@ -1,7 +1,5 @@
 package de.ina.ina_p_platen.login;
 
-import de.ina.ina_p_platen.classes.UserUtils;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 @WebServlet("/login-servlet")
 public class LoginServlet extends HttpServlet {
@@ -25,7 +22,19 @@ public class LoginServlet extends HttpServlet {
         else
             loginHelper = (LoginHelper)session.getAttribute("login-helper");
 
-        loginHelper.doPost(request, response);
+        String method = request.getParameter("_method");
+
+        switch (method) {
+
+            case "LOGIN":
+                loginHelper.doLogin(request, response);
+                break;
+
+            case "LOGOUT":
+                loginHelper.doLogout(request, response);
+                break;
+
+        }
     }
 
 }
