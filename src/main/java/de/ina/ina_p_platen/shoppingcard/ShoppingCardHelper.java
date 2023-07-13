@@ -59,14 +59,14 @@ public class ShoppingCardHelper {
 
                 //Die Anzahl der Artikelstücke wird hier in der Artikelliste geupdated
                 int newAmountInArticleList = article.getAmount() - desiredAmount;
-                ArticlesUtils.updateArticleAmount(articles, articleID, newAmountInArticleList);
-                servletContext.setAttribute("articles", articles);
+                ArrayList<ArticleBean> updateArticle = ArticlesUtils.updateArticleAmount(articles, articleID, newAmountInArticleList);
+                servletContext.setAttribute("articles", updateArticle);
 
                 //Die Anzahl der Artikelstücke wird hier in dem Warenkorb geupdated
                 ArticleBean shoppingCardArticle = ArticlesUtils.getArticleByID(shoppingCard, articleID);
                 int newAmountInShoppingCard = shoppingCardArticle.getAmount() + desiredAmount;
-                ArticlesUtils.updateArticleAmount(shoppingCard, articleID, newAmountInShoppingCard);
-                session.setAttribute("shopping-card", shoppingCard);
+                ArrayList<ArticleBean> updateShoppingCard = ArticlesUtils.updateArticleAmount(shoppingCard, articleID, newAmountInShoppingCard);
+                session.setAttribute("shopping-card", updateShoppingCard);
 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
                 dispatcher.forward(request, response);
@@ -76,8 +76,8 @@ public class ShoppingCardHelper {
 
                 //Die Anzahl der Artikelstücke wird hier in der Artikelliste geupdated
                 int newAmountInArticleList = article.getAmount() - desiredAmount;
-                ArticlesUtils.updateArticleAmount(articles, articleID, newAmountInArticleList);
-                servletContext.setAttribute("articles", articles);
+                ArrayList<ArticleBean> updateArticle = ArticlesUtils.updateArticleAmount(articles, articleID, newAmountInArticleList);
+                servletContext.setAttribute("articles", updateArticle);
 
                 //Artikel wird hier in dem Warenkorb hinzugefügt
                 ArticleBean addArticle = new ArticleBean();
@@ -119,8 +119,8 @@ public class ShoppingCardHelper {
             ShoppingCardUtils.deleteArticleByID(shoppingCard, articleID);
             session.setAttribute("shopping-card", shoppingCard);
 
-            ArticlesUtils.updateArticleAmount(articles, articleID, articleInArticle.getAmount() + articleInShoppingCard.getAmount());
-            servletContext.setAttribute("articles", articles);
+            ArrayList<ArticleBean> updateArticle = ArticlesUtils.updateArticleAmount(articles, articleID, articleInArticle.getAmount() + articleInShoppingCard.getAmount());
+            servletContext.setAttribute("articles", updateArticle);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/shopping-card");
             dispatcher.forward(request, response);
         }

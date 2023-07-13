@@ -16,6 +16,7 @@ public class ArticlesHelper {
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+        //TODO: Artikel werden ersetzt die Anzahl
         HttpSession session = request.getSession();
         ServletContext servletContext = request.getServletContext();
 
@@ -34,9 +35,13 @@ public class ArticlesHelper {
             if (ArticlesUtils.isArticleNameExists(articles, getArticleName)) {
 
                 int getArticleID = ArticlesUtils.getArticleIDByName(articles, getArticleName);
+                ArticleBean article = ArticlesUtils.getArticleByID(articles, getArticleID);
 
-                ArticlesUtils.updateArticleAmount(articles, getArticleID, articleAmount);
-                servletContext.setAttribute("articles", articles);
+                int newAmount = article.getAmount() + articleAmount;
+
+                ArrayList<ArticleBean> updateArticle = ArticlesUtils.updateArticleAmount(articles, getArticleID, newAmount);
+
+                servletContext.setAttribute("articles", updateArticle);
 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
                 dispatcher.forward(request, response);
