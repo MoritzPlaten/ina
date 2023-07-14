@@ -1,5 +1,9 @@
 package de.ina.ina_p_platen.login;
 
+import de.ina.ina_p_platen.articles.ArticleBean;
+import de.ina.ina_p_platen.classes.article.Articles;
+import de.ina.ina_p_platen.classes.article.ArticlesUtils;
+import de.ina.ina_p_platen.classes.shoppingCard.ShoppingCardUtils;
 import de.ina.ina_p_platen.classes.user.UserUtils;
 import de.ina.ina_p_platen.classes.user.Users;
 import jakarta.servlet.RequestDispatcher;
@@ -66,15 +70,38 @@ public class LoginHelper {
         }
     }
 
-    ///TODO: Warenkorb soll gelöscht werden + Alle Artikel wieder in die Artikelliste
     public void doLogout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         HttpSession session = request.getSession();
+        ServletContext servletContext = request.getServletContext();
 
         if (session.getAttribute("login-helper") == null)
             session.setAttribute("login-helper", this);
 
-        if (session.getAttribute("user") != null) {
+        UserBean user = (UserBean)session.getAttribute("user");
+
+        if (user != null) {
+
+            Articles shoppingCard = (Articles) session.getAttribute("shopping-card");
+            Articles articles = (Articles) servletContext.getAttribute("articles");
+
+            for (ArticleBean articleInShoppingCard : shoppingCard) {
+
+                ArticleBean articleInArticles = ArticlesUtils.getArticleByID(articles, articleInShoppingCard.getID());
+                if (articleInArticles != null) {
+
+                    int newAmountInShoppingCard = 0;
+                    int newAmountInArticleList = articleInShoppingCard.getAmount() + articleInArticles.getAmount();
+
+                    //change the amount of the shopping card
+                    ArticlesUtils.updateArticleAmount(shoppingCard, articleInShoppingCard.getID(), newAmountInShoppingCard);
+                    session.setAttribute("shopping-card", shoppingCard);
+
+                    //change the amount of the articles
+                    ArticlesUtils.updateArticleAmount(articles, articleInShoppingCard.getID(), newAmountInArticleList);
+                    servletContext.setAttribute("articles", articles);
+                }
+            }
 
             session.removeAttribute("user");
 

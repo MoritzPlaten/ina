@@ -44,48 +44,58 @@ public class ShoppingCardHelper {
 
             ArticleBean article = ArticlesUtils.getArticleByID(articles, articleID);
 
-            //Fehler, wenn die gewünschte Artikelanzahl nicht mit der vorhandenen Artikelanzahl übereinstimmt
-            if (!ShoppingCardUtils.isArticleAvailable(articles, articleID, desiredAmount)) {
+            if (article != null) {
 
-                error = true;
-                RequestDispatcher dispatcher = request.getRequestDispatcher("/articles?message=notavailable");
-                dispatcher.forward(request, response);
-            }
+                //Fehler, wenn die gewünschte Artikelanzahl nicht mit der vorhandenen Artikelanzahl übereinstimmt
+                if (!ShoppingCardUtils.isArticleAvailable(articles, articleID, desiredAmount)) {
 
-            //Wenn der Artikel in dem Warenkorb ist + kein Fehler aufgetreten ist
-            if (ShoppingCardUtils.isArticleInShoppingCard(shoppingCard, articleID) && !error) {
+                    error = true;
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/articles?message=notavailable");
+                    dispatcher.forward(request, response);
+                }
 
-                //Die Anzahl der Artikelstücke wird hier in der Artikelliste geupdated
-                int newAmountInArticleList = article.getAmount() - desiredAmount;
-                ArrayList<ArticleBean> updateArticle = ArticlesUtils.updateArticleAmount(articles, articleID, newAmountInArticleList);
-                servletContext.setAttribute("articles", updateArticle);
+                //Wenn der Artikel in dem Warenkorb ist + kein Fehler aufgetreten ist
+                if (ShoppingCardUtils.isArticleInShoppingCard(shoppingCard, articleID) && !error) {
 
-                //Die Anzahl der Artikelstücke wird hier in dem Warenkorb geupdated
-                ArticleBean shoppingCardArticle = ArticlesUtils.getArticleByID(shoppingCard, articleID);
-                int newAmountInShoppingCard = shoppingCardArticle.getAmount() + desiredAmount;
-                ArrayList<ArticleBean> updateShoppingCard = ArticlesUtils.updateArticleAmount(shoppingCard, articleID, newAmountInShoppingCard);
-                session.setAttribute("shopping-card", updateShoppingCard);
+                    //Die Anzahl der Artikelstücke wird hier in der Artikelliste geupdated
+                    int newAmountInArticleList = article.getAmount() - desiredAmount;
+                    ArticlesUtils.updateArticleAmount(articles, articleID, newAmountInArticleList);
+                    servletContext.setAttribute("articles", articles);
 
-                RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
-                dispatcher.forward(request, response);
-            }
-            // Wenn der Artikel nicht im Warenkorb vorhanden ist + kein Fehler aufgetreten ist
-            else if (!ShoppingCardUtils.isArticleInShoppingCard(shoppingCard, articleID) && !error) {
+                    //Die Anzahl der Artikelstücke wird hier in dem Warenkorb geupdated
+                    ArticleBean shoppingCardArticle = ArticlesUtils.getArticleByID(shoppingCard, articleID);
+                    if (shoppingCardArticle != null) {
 
-                //Die Anzahl der Artikelstücke wird hier in der Artikelliste geupdated
-                int newAmountInArticleList = article.getAmount() - desiredAmount;
-                ArrayList<ArticleBean> updateArticle = ArticlesUtils.updateArticleAmount(articles, articleID, newAmountInArticleList);
-                servletContext.setAttribute("articles", updateArticle);
+                        int newAmountInShoppingCard = shoppingCardArticle.getAmount() + desiredAmount;
+                        ArticlesUtils.updateArticleAmount(shoppingCard, articleID, newAmountInShoppingCard);
+                        session.setAttribute("shopping-card", shoppingCard);
+                    }
 
-                //Artikel wird hier in dem Warenkorb hinzugefügt
-                ArticleBean addArticle = new ArticleBean();
-                addArticle.setID(article.getID());
-                addArticle.setName(article.getName());
-                addArticle.setAmount(desiredAmount);
-                shoppingCard.add(addArticle);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
+                    dispatcher.forward(request, response);
+                }
+                // Wenn der Artikel nicht im Warenkorb vorhanden ist + kein Fehler aufgetreten ist
+                else if (!ShoppingCardUtils.isArticleInShoppingCard(shoppingCard, articleID) && !error) {
 
-                session.setAttribute("shopping-card", shoppingCard);
-                RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
+                    //Die Anzahl der Artikelstücke wird hier in der Artikelliste geupdated
+                    int newAmountInArticleList = article.getAmount() - desiredAmount;
+                    ArticlesUtils.updateArticleAmount(articles, articleID, newAmountInArticleList);
+                    servletContext.setAttribute("articles", articles);
+
+                    //Artikel wird hier in dem Warenkorb hinzugefügt
+                    ArticleBean addArticle = new ArticleBean();
+                    addArticle.setID(article.getID());
+                    addArticle.setName(article.getName());
+                    addArticle.setAmount(desiredAmount);
+                    shoppingCard.add(addArticle);
+
+                    session.setAttribute("shopping-card", shoppingCard);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
+                    dispatcher.forward(request, response);
+                }
+            } else {
+
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/articles?message=idnotavailable");
                 dispatcher.forward(request, response);
             }
         }
@@ -111,14 +121,21 @@ public class ShoppingCardHelper {
             Articles shoppingCard = (Articles) session.getAttribute("shopping-card");
             Articles articles = (Articles) servletContext.getAttribute("articles");
 
-            ArticleBean articleInShoppingCard = ArticlesUtils.getArticleByID(shoppingCard, articleID);
-            ArticleBean articleInArticle = ArticlesUtils.getArticleByID(articles, articleID);
-
             ShoppingCardUtils.deleteArticleByID(shoppingCard, articleID);
             session.setAttribute("shopping-card", shoppingCard);
 
-            ArrayList<ArticleBean> updateArticle = ArticlesUtils.updateArticleAmount(articles, articleID, articleInArticle.getAmount() + articleInShoppingCard.getAmount());
-            servletContext.setAttribute("articles", updateArticle);
+            ArticleBean articleInShoppingCard = ArticlesUtils.getArticleByID(shoppingCard, articleID);
+            ArticleBean articleInArticle = ArticlesUtils.getArticleByID(articles, articleID);
+
+            if (articleInArticle != null && articleInShoppingCard != null) {
+                ArticlesUtils.updateArticleAmount(
+                        articles,
+                        articleID,
+                        articleInArticle.getAmount() + articleInShoppingCard.getAmount()
+                );
+                servletContext.setAttribute("articles", articles);
+            }
+
             RequestDispatcher dispatcher = request.getRequestDispatcher("/shopping-card");
             dispatcher.forward(request, response);
         }

@@ -55,6 +55,14 @@ public class MessageUtils {
             case "buyed":
                 messageBody = new Message("Sie haben erfolgreich eingekauft!", false);
                 break;
+
+            case "idnotavailable":
+                messageBody = new Message("Die ID ist nicht verfügbar, bitte wenden Sie sich an den Entwickler!", true);
+                break;
+
+            case "less":
+                messageBody = new Message("Der Artikel ist im Warenkorb! Die Anzahl des neuen Lagerbestand darf nicht kleiner des Lagerbestand des im Warenkorb sein! Andernfalls löschen Sie den Artikel aus dem Warenkorb!", true);
+                break;
         }
 
         return messageBody;

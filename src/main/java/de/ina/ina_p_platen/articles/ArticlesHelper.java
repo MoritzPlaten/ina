@@ -1,5 +1,6 @@
 package de.ina.ina_p_platen.articles;
 
+import de.ina.ina_p_platen.classes.article.Articles;
 import de.ina.ina_p_platen.classes.article.ArticlesUtils;
 import de.ina.ina_p_platen.classes.TypUtils;
 import jakarta.servlet.RequestDispatcher;
@@ -25,7 +26,7 @@ public class ArticlesHelper {
 
         synchronized (servletContext) {
 
-            ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
+            Articles articles = (Articles) servletContext.getAttribute("articles");
 
             Enumeration<String> parameterNames = request.getParameterNames();
             parameterNames.nextElement();
@@ -40,11 +41,12 @@ public class ArticlesHelper {
                 int getArticleID = ArticlesUtils.getArticleIDByName(articles, getArticleName);
                 ArticleBean article = ArticlesUtils.getArticleByID(articles, getArticleID);
 
-                int newAmount = article.getAmount() + articleAmount;
+                if (article != null) {
+                    int newAmount = article.getAmount() + articleAmount;
 
-                ArrayList<ArticleBean> updateArticle = ArticlesUtils.updateArticleAmount(articles, getArticleID, newAmount);
-
-                servletContext.setAttribute("articles", updateArticle);
+                    ArticlesUtils.updateArticleAmount(articles, getArticleID, newAmount);
+                    servletContext.setAttribute("articles", articles);
+                }
 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
                 dispatcher.forward(request, response);
@@ -64,7 +66,6 @@ public class ArticlesHelper {
         }
     }
 
-    //TODO: Testen
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         HttpSession session = request.getSession();
@@ -75,33 +76,81 @@ public class ArticlesHelper {
 
         synchronized (servletContext) {
 
-            ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
-            ArrayList<ArticleBean> shoppingCard = (ArrayList<ArticleBean>) session.getAttribute("shopping-card");
+            Articles articles = (Articles) servletContext.getAttribute("articles");
+            Articles shoppingCard = (Articles) session.getAttribute("shopping-card");
 
             Enumeration<String> parameterNames = request.getParameterNames();
             parameterNames.nextElement();
 
-            String getArticleName = request.getParameter(parameterNames.nextElement());
+            String getArticleID = request.getParameter(parameterNames.nextElement());
 
             //get article
-            int articleID = ArticlesUtils.getArticleIDByName(articles, getArticleName);
-            ArticleBean article = ArticlesUtils.getArticleByID(articles, articleID);
+            int articleID = TypUtils.toInt(getArticleID);
 
             //update article list
-            articles.remove(article);
-            servletContext.setAttribute("articles", articles);
+            ArticleBean articleInArticles = ArticlesUtils.getArticleByID(articles, articleID);
+            if (articleInArticles != null) {
+                articles.remove(articleInArticles);
+                servletContext.setAttribute("articles", articles);
+            }
 
             //update shopping card list
-            shoppingCard.remove(article);
-            session.setAttribute("shopping-card", shoppingCard);
+            ArticleBean articleInShoppingCard = ArticlesUtils.getArticleByID(shoppingCard, articleID);
+            if (articleInShoppingCard != null) {
+                shoppingCard.remove(articleInShoppingCard);
+                session.setAttribute("shopping-card", shoppingCard);
+            }
 
             RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
             dispatcher.forward(request, response);
         }
     }
 
-    ///TODO: Hier
     public void doChange(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+        HttpSession session = request.getSession();
+        ServletContext servletContext = request.getServletContext();
+
+        if (session.getAttribute("articles-helper") == null)
+            session.setAttribute("articles-helper", this);
+
+        synchronized (servletContext) {
+
+            Articles articles = (Articles) servletContext.getAttribute("articles");
+            Articles shoppingCard = (Articles) session.getAttribute("shopping-card");
+
+            Enumeration<String> parameterNames = request.getParameterNames();
+            parameterNames.nextElement();
+
+            String getArticleID = request.getParameter(parameterNames.nextElement());
+            String getNewArticleAmount = request.getParameter(parameterNames.nextElement());
+
+            //get article and amount which should be change
+            int articleID = TypUtils.toInt(getArticleID);
+            int newArticleAmount = TypUtils.toInt(getNewArticleAmount);
+
+            //update article list
+            ArticleBean articleInShoppingCard = ArticlesUtils.getArticleByID(shoppingCard, articleID);
+            //article is in shopping card
+            if (articleInShoppingCard != null) {
+
+                //new article amount is not less than the article amount in shopping card
+                //Dies müsste ansich nicht implementiert werden, sollte aber als logische Bedingung enthalten sein
+                if (0 > (articleInShoppingCard.getAmount() - newArticleAmount)) {
+                    ArticlesUtils.updateArticleAmount(articles, articleID, newArticleAmount);
+                    servletContext.setAttribute("articles", articles);
+                } else {
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/articles?message=less");
+                    dispatcher.forward(request, response);
+                }
+            } else {
+                // article is not in shopping card
+                ArticlesUtils.updateArticleAmount(articles, articleID, newArticleAmount);
+                servletContext.setAttribute("articles", articles);
+            }
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
+            dispatcher.forward(request, response);
+        }
     }
 }

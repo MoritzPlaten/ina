@@ -3,6 +3,8 @@ package de.ina.ina_p_platen.classes.shoppingCard;
 import de.ina.ina_p_platen.articles.ArticleBean;
 import de.ina.ina_p_platen.classes.article.Articles;
 import de.ina.ina_p_platen.classes.article.ArticlesUtils;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 

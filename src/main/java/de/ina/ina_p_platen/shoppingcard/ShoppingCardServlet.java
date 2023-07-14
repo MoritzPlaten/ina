@@ -27,9 +27,9 @@ public class ShoppingCardServlet extends HttpServlet {
         else
             articlesHelper = (ShoppingCardHelper)session.getAttribute("shopping-card-helper");
 
-        Enumeration<String> parameterNames = request.getParameterNames();
+        String method = request.getParameter("_method");
 
-        switch (request.getParameter(parameterNames.nextElement())) {
+        switch (method) {
 
             case "ADD":
                 articlesHelper.doPost(request, response);

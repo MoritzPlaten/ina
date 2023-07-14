@@ -73,14 +73,13 @@ public class ArticlesUtils {
      * @param articleID Die Artikel ID des Artikel, wo die Anzahl geändert werden soll
      * @param newAmount Die neue Anzahl des Artikels setzen
      */
-    public static ArrayList<ArticleBean> updateArticleAmount(ArrayList<ArticleBean> inputList, int articleID, int newAmount) {
+    public static void updateArticleAmount(ArrayList<ArticleBean> inputList, int articleID, int newAmount) {
         for (ArticleBean article : inputList) {
             if (article.getID() == articleID) {
                 article.setAmount(newAmount); // Neue Anzahl setzen
                 break;
             }
         }
-        return inputList;
     }
 
     /**
@@ -143,15 +142,16 @@ public class ArticlesUtils {
      */
     public static ArticleBean getArticleByID(ArrayList<ArticleBean> articles, int id) {
 
-        ArticleBean output = null;
+        if (articles != null) {
 
-        for (ArticleBean article : articles) {
+            for (ArticleBean article : articles) {
 
-            if (article.getID() == id) {
-                output = article;
+                if (article.getID() == id) {
+                    return article;
+                }
             }
         }
 
-        return output;
+        return null;
     }
 }
