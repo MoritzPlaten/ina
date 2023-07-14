@@ -1,6 +1,7 @@
 package de.ina.ina_p_platen.login;
 
-import de.ina.ina_p_platen.classes.UserUtils;
+import de.ina.ina_p_platen.classes.user.UserUtils;
+import de.ina.ina_p_platen.classes.user.Users;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -9,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 
 public class LoginHelper {
@@ -34,7 +34,7 @@ public class LoginHelper {
 
         synchronized (servletContext) {
 
-            ArrayList<UserBean> users = (ArrayList<UserBean>) servletContext.getAttribute("userList");
+            Users users = (Users) servletContext.getAttribute("userList");
 
             boolean error = false;
             if (session.getAttribute("user") != null) {
@@ -66,6 +66,7 @@ public class LoginHelper {
         }
     }
 
+    ///TODO: Warenkorb soll gelöscht werden + Alle Artikel wieder in die Artikelliste
     public void doLogout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         HttpSession session = request.getSession();

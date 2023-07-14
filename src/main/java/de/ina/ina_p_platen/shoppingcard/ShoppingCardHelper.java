@@ -1,20 +1,18 @@
 package de.ina.ina_p_platen.shoppingcard;
 
 import de.ina.ina_p_platen.articles.ArticleBean;
-import de.ina.ina_p_platen.classes.ArticlesUtils;
-import de.ina.ina_p_platen.classes.ShoppingCardUtils;
+import de.ina.ina_p_platen.classes.article.Articles;
+import de.ina.ina_p_platen.classes.article.ArticlesUtils;
+import de.ina.ina_p_platen.classes.shoppingCard.ShoppingCardUtils;
 import de.ina.ina_p_platen.classes.TypUtils;
-import de.ina.ina_p_platen.login.UserBean;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -37,8 +35,8 @@ public class ShoppingCardHelper {
         int articleID = TypUtils.toInt(getArticleID);
         int desiredAmount = TypUtils.toInt(getDesiredAmount);
 
-        ArrayList<ArticleBean> shoppingCard = (ArrayList<ArticleBean>) session.getAttribute("shopping-card");
-        ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
+        Articles shoppingCard = (Articles) session.getAttribute("shopping-card");
+        Articles articles = (Articles) servletContext.getAttribute("articles");
 
         synchronized (servletContext) {
 
@@ -110,8 +108,8 @@ public class ShoppingCardHelper {
 
         synchronized (servletContext) {
 
-            ArrayList<ArticleBean> shoppingCard = (ArrayList<ArticleBean>) session.getAttribute("shopping-card");
-            ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
+            Articles shoppingCard = (Articles) session.getAttribute("shopping-card");
+            Articles articles = (Articles) servletContext.getAttribute("articles");
 
             ArticleBean articleInShoppingCard = ArticlesUtils.getArticleByID(shoppingCard, articleID);
             ArticleBean articleInArticle = ArticlesUtils.getArticleByID(articles, articleID);
@@ -136,8 +134,7 @@ public class ShoppingCardHelper {
 
         synchronized (servletContext) {
 
-            ArrayList<ArticleBean> shoppingCard = (ArrayList<ArticleBean>) session.getAttribute("shopping-card");
-            //ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
+            Articles shoppingCard = (Articles) session.getAttribute("shopping-card");
 
             ArrayList<ArticleBean> removeArticles = new ArrayList<>();
 
@@ -146,17 +143,12 @@ public class ShoppingCardHelper {
                 int articleID = article.getID();
 
                 ArticleBean articleInShoppingCard = ArticlesUtils.getArticleByID(shoppingCard, articleID);
-                //ArticleBean articleInArticle = ArticlesUtils.getArticleByID(articles, articleID);
-
-                //ShoppingCardUtils.deleteArticleByID(shoppingCard, articleID);
                 removeArticles.add(articleInShoppingCard);
-                //ArticlesUtils.updateArticleAmount(articles, articleID, articleInArticle.getAmount() + articleInShoppingCard.getAmount());
             }
 
             shoppingCard.removeAll(removeArticles);
 
             session.setAttribute("shopping-card", shoppingCard);
-            //servletContext.setAttribute("articles", articles);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/articles?message=buyed");
             dispatcher.forward(request, response);
         }

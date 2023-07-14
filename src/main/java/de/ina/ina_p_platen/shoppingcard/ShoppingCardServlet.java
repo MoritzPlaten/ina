@@ -1,8 +1,6 @@
 package de.ina.ina_p_platen.shoppingcard;
 
-import de.ina.ina_p_platen.articles.ArticlesHelper;
-import de.ina.ina_p_platen.classes.ShoppingCardUtils;
-import de.ina.ina_p_platen.login.UserBean;
+import de.ina.ina_p_platen.classes.shoppingCard.ShoppingCardUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,7 +18,8 @@ public class ShoppingCardServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
 
-        ShoppingCardUtils.initializeShoppingCard(request);
+        //initialize the shopping card
+        ShoppingCardUtils.initializeShoppingCard(session);
 
         ShoppingCardHelper articlesHelper;
         if (session.getAttribute("shopping-card-helper") == null)

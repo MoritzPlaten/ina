@@ -1,4 +1,4 @@
-package de.ina.ina_p_platen.classes;
+package de.ina.ina_p_platen.classes.message;
 
 public class Message {
 

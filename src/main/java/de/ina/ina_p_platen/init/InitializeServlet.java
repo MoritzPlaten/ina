@@ -1,12 +1,10 @@
 package de.ina.ina_p_platen.init;
 
-import de.ina.ina_p_platen.classes.ArticlesUtils;
-import de.ina.ina_p_platen.classes.UserUtils;
+import de.ina.ina_p_platen.classes.article.ArticlesUtils;
+import de.ina.ina_p_platen.classes.user.UserUtils;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
-
-import java.net.http.HttpRequest;
 
 public class InitializeServlet extends HttpServlet {
     @Override

@@ -1,7 +1,8 @@
 package de.ina.ina_p_platen.register;
 
 import de.ina.ina_p_platen.classes.PasswordValidator;
-import de.ina.ina_p_platen.classes.UserUtils;
+import de.ina.ina_p_platen.classes.user.UserUtils;
+import de.ina.ina_p_platen.classes.user.Users;
 import de.ina.ina_p_platen.login.UserBean;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
@@ -11,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class RegisterHelper {
@@ -26,7 +26,7 @@ public class RegisterHelper {
 
         synchronized (servletContext) {
 
-            ArrayList<UserBean> users = (ArrayList<UserBean>) servletContext.getAttribute("userList");
+            Users users = (Users) servletContext.getAttribute("userList");
 
             String username = request.getParameter("username");
             String password = request.getParameter("password");

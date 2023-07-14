@@ -1,6 +1,6 @@
 package de.ina.ina_p_platen.articles;
 
-import de.ina.ina_p_platen.classes.ArticlesUtils;
+import de.ina.ina_p_platen.classes.article.ArticlesUtils;
 import de.ina.ina_p_platen.classes.TypUtils;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
@@ -11,12 +11,12 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 public class ArticlesHelper {
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        //TODO: Artikel werden ersetzt die Anzahl
         HttpSession session = request.getSession();
         ServletContext servletContext = request.getServletContext();
 
@@ -27,8 +27,11 @@ public class ArticlesHelper {
 
             ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
 
-            String getArticleName = request.getParameter("articleName");
-            String getArticleAmount = request.getParameter("articleAmount");
+            Enumeration<String> parameterNames = request.getParameterNames();
+            parameterNames.nextElement();
+
+            String getArticleName = request.getParameter(parameterNames.nextElement());
+            String getArticleAmount = request.getParameter(parameterNames.nextElement());
 
             int articleAmount = TypUtils.toInt(getArticleAmount);
 
@@ -59,5 +62,46 @@ public class ArticlesHelper {
                 dispatcher.forward(request, response);
             }
         }
+    }
+
+    //TODO: Testen
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+        HttpSession session = request.getSession();
+        ServletContext servletContext = request.getServletContext();
+
+        if (session.getAttribute("articles-helper") == null)
+            session.setAttribute("articles-helper", this);
+
+        synchronized (servletContext) {
+
+            ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
+            ArrayList<ArticleBean> shoppingCard = (ArrayList<ArticleBean>) session.getAttribute("shopping-card");
+
+            Enumeration<String> parameterNames = request.getParameterNames();
+            parameterNames.nextElement();
+
+            String getArticleName = request.getParameter(parameterNames.nextElement());
+
+            //get article
+            int articleID = ArticlesUtils.getArticleIDByName(articles, getArticleName);
+            ArticleBean article = ArticlesUtils.getArticleByID(articles, articleID);
+
+            //update article list
+            articles.remove(article);
+            servletContext.setAttribute("articles", articles);
+
+            //update shopping card list
+            shoppingCard.remove(article);
+            session.setAttribute("shopping-card", shoppingCard);
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
+            dispatcher.forward(request, response);
+        }
+    }
+
+    ///TODO: Hier
+    public void doChange(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
     }
 }

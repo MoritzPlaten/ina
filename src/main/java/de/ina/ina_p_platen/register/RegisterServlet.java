@@ -1,9 +1,5 @@
 package de.ina.ina_p_platen.register;
 
-import de.ina.ina_p_platen.classes.UserUtils;
-import de.ina.ina_p_platen.login.LoginHelper;
-import de.ina.ina_p_platen.login.UserBean;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

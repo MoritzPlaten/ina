@@ -1,4 +1,4 @@
-package de.ina.ina_p_platen.classes;
+package de.ina.ina_p_platen.classes.article;
 
 import de.ina.ina_p_platen.articles.ArticleBean;
 import jakarta.servlet.ServletContext;
@@ -17,7 +17,7 @@ public class ArticlesUtils {
 
             if (servletContext.getAttribute("articles") == null) {
 
-                ArrayList<ArticleBean> articles = new ArrayList<>();
+                Articles articles = new Articles();
 
                 ArticleBean articleBean1 = new ArticleBean();
                 articleBean1.setID(0);

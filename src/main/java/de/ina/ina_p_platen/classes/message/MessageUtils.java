@@ -1,6 +1,6 @@
-package de.ina.ina_p_platen.classes;
+package de.ina.ina_p_platen.classes.message;
 
-import java.util.ArrayList;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Soll die Benachrichtigungen in volle Sätze umwandeln
@@ -58,5 +58,15 @@ public class MessageUtils {
         }
 
         return messageBody;
+    }
+
+    public static Message receiveMessage(HttpServletRequest request) {
+
+        String message = request.getParameter("message");
+        if (message != null) {
+            return MessageUtils.translateMessage(message);
+        } else {
+            return null;
+        }
     }
 }

@@ -1,9 +1,8 @@
-package de.ina.ina_p_platen.classes;
+package de.ina.ina_p_platen.classes.user;
 
 import de.ina.ina_p_platen.login.UserBean;
 import jakarta.servlet.ServletContext;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class UserUtils {
@@ -13,7 +12,7 @@ public class UserUtils {
      * @param username Der Username der überprüft werden soll
      * @return Ein boolean, der angibt, ob der User existiert oder nicht
      */
-    public static boolean isUserExists(ArrayList<UserBean> userList, String username) {
+    public static boolean isUserExists(Users userList, String username) {
         for (UserBean user : userList) {
             if (user.getUsername().equals(username)) {
                 return true;
@@ -38,7 +37,7 @@ public class UserUtils {
      * @param username Der Username vom Benutzer, wovon man das Password haben möchte
      * @return Das Password vom Nutzer mit dem Username
      */
-    public static String getPasswordFromUserList(ArrayList<UserBean> userList, String username) {
+    public static String getPasswordFromUserList(Users userList, String username) {
         if (userList != null) {
             for (UserBean user : userList) {
                 if (user.getUsername().equals(username)) {
@@ -57,7 +56,7 @@ public class UserUtils {
         synchronized (servletContext) {
             if (servletContext.getAttribute("userList") == null) {
 
-                ArrayList<UserBean> users = new ArrayList<UserBean>();
+                Users users = new Users();
 
                 UserBean userBean1 = new UserBean();
                 userBean1.setUsername("user1");

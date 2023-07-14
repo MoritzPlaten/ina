@@ -1,9 +1,9 @@
 <%@ page import="de.ina.ina_p_platen.login.UserBean" %>
-<%@ page import="java.util.ArrayList" %>
 <%@ page import="de.ina.ina_p_platen.articles.ArticleBean" %>
-<%@ page import="de.ina.ina_p_platen.classes.MessageUtils" %>
-<%@ page import="java.io.PrintWriter" %>
-<%@ page import="de.ina.ina_p_platen.classes.Message" %>
+<%@ page import="de.ina.ina_p_platen.classes.message.MessageUtils" %>
+<%@ page import="de.ina.ina_p_platen.classes.message.Message" %>
+<%@ page import="de.ina.ina_p_platen.classes.article.Articles" %>
+<%@ page import="de.ina.ina_p_platen.init.InitializeServlet" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -87,8 +87,20 @@
 </head>
 <body>
 
-<%-- Initialisier die Startwerte --%>
-<jsp:include page="/initialize" />
+<%-- initialize the start values --%>
+<jsp:include page="/initialize-servlet" />
+
+<%
+    //receive the user
+    HttpSession getSession = request.getSession();
+    UserBean user = (UserBean) getSession.getAttribute("user");
+
+    ServletContext servletContext = request.getServletContext();
+    Articles articles = (Articles) servletContext.getAttribute("articles");
+
+    //receive the messages
+    Message message = MessageUtils.receiveMessage(request);
+%>
 
 <%-- Toolbar for Home Screen --%>
 
@@ -99,16 +111,15 @@
         <h2><a style="font-family: Bahnschrift,sans-serif;text-decoration: none;color: black" href="${pageContext.request.contextPath}/articles">Der Shop</a></h2>
     </div>
     <div style="display: flex;justify-content: center;align-content: center">
+
         <a style="font-family: Bahnschrift,sans-serif;margin: auto;color: black;text-decoration: none;padding: 10px;padding-right: 15px;padding-left: 15px;background-color: white;border: black 2px solid;border-radius: 20px" href="${pageContext.request.contextPath}/shopping-card">Warenkorb</a>
         <div style="width: 15px"></div>
-        <%
-            HttpSession getSession = request.getSession();
-            UserBean user = (UserBean) getSession.getAttribute("user");
 
-            if (user == null) {
-        %>
+        <% if (user == null) { %>
+
             <a style="font-family: Bahnschrift,sans-serif;margin: auto;color: white;text-decoration: none;padding: 10px;padding-right: 15px;padding-left: 15px;background-color: darkslategrey;border: black 2px solid;border-radius: 20px" href="${pageContext.request.contextPath}/register">Registrieren</a>
             <div style="width: 20px"></div>
+
         <% } else {%>
 
             <%-- Logout Button --%>
@@ -122,7 +133,7 @@
     </div>
 </div>
 
-<%-- User Begrüßung --%>
+<%-- user greeting --%>
 <div style="height: 20px"></div>
 
 <%
@@ -146,34 +157,26 @@
 
 <div style="height: 60px"></div>
 
-<%
-    ServletContext servletContext = request.getServletContext();
-    ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) servletContext.getAttribute("articles");
-
-    //Hier werden die Benachrichtigungen abgefangen
-    Message messageBody = null;
-    String message = request.getParameter("message");
-    if (message != null) {
-        messageBody = MessageUtils.translateMessage(message);
-    }
-%>
-
-<%-- Hier werden die Benachrichtigung ausgegeben --%>
+<%-- shows the messages --%>
 <div style="display: flex;justify-items: center;justify-content: center">
-    <h4 style="color: indianred"><%=messageBody != null && messageBody.isError() ? messageBody.getMessage() : ""%></h4>
-    <h4 style="color: seagreen"><%=messageBody != null && !messageBody.isError() ? messageBody.getMessage() : ""%></h4>
+    <h4 style="color: indianred"><%=message != null && message.isError() ? message.getMessage() : ""%></h4>
+    <h4 style="color: seagreen"><%=message != null && !message.isError() ? message.getMessage() : ""%></h4>
 </div>
 
-<%-- Artikelliste anzeigen, wenn Artikel vorhanden sind --%>
+<%-- show articles, if they are available --%>
 <% if (articles != null) { %>
 
-<%-- Artikelliste --%>
+<%-- articles --%>
 <table>
     <thead>
     <tr>
         <th>Artikel-Name</th>
         <th>Verfügbare Anzahl</th>
         <th>Ausgewählte Anzahl</th>
+        <% if (user != null && user.getUsername() != null && user.getUsername().equals("user1")) { %>
+        <th>Löschen</th>
+        <th>Lagerbestand ändern</th>
+        <% } %>
     </tr>
     </thead>
     <tbody>
@@ -183,6 +186,7 @@
         <td><%= article.getAmount() %></td>
         <td>
 
+            <%-- add article --%>
             <form style="display: grid;" action="${pageContext.request.contextPath}/shopping-card-servlet" method="post">
                 <div style="display: flex; align-items: center;">
                     <input type="hidden" name="_method" value="ADD">
@@ -191,7 +195,34 @@
                     <input type="submit" value="In den Warenkorb">
                 </div>
             </form>
+
         </td>
+
+        <% if (user != null && user.getUsername() != null && user.getUsername().equals("user1")) { %>
+        <td>
+            <%-- delete article, only for user1 --%>
+
+            <form style="display: grid;" action="${pageContext.request.contextPath}/articles-servlet" method="post">
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="articleId<%=article.getID()%>" value="<%=article.getID()%>">
+                <input type="submit" value="Artikel löschen">
+            </form>
+        </td>
+
+        <td>
+            <%-- change amount of article, only for user1 --%>
+
+            <form style="display: grid;" action="${pageContext.request.contextPath}/articles-servlet" method="post">
+                <div style="display: flex; align-items: center;">
+                    <input type="hidden" name="_method" value="CHANGE">
+                    <input type="hidden" name="articleId<%=article.getID()%>" value="<%=article.getID()%>">
+                    <input style="width: 20%" type="number" name="articleAmount<%=article.getID()%>" value="1" min="1">
+                    <input type="submit" value="Lagerbestand ändern">
+                </div>
+            </form>
+        </td>
+        <% } %>
+
     </tr>
     <% } %>
     </tbody>
@@ -199,16 +230,16 @@
 
 <% } %>
 
-<%-- Artikel hinzufügen, nur für user1 --%>
-
 <div style="height: 40px"></div>
 
-<%-- Artikel hinzufügen, kann nur user1 --%>
+<%-- add article to articles, only for user1 --%>
 <% if (user != null && user.getUsername() != null && user.getUsername().equals("user1")) { %>
 
 <h2>Artikel hinzufügen</h2>
 
 <form action="${pageContext.request.contextPath}/articles-servlet" method="post">
+    <input type="hidden" name="_method" value="ADD">
+
     <label for="articleName">Artikelname:</label>
     <input type="text" id="articleName" name="articleName" required>
 

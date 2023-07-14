@@ -48,6 +48,6 @@
 
     <servlet-mapping>
         <servlet-name>myInitializationServlet</servlet-name>
-        <url-pattern>/initialize</url-pattern>
+        <url-pattern>/initialize-servlet</url-pattern>
     </servlet-mapping>
 </web-app>

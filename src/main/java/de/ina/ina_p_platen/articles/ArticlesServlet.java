@@ -1,9 +1,5 @@
 package de.ina.ina_p_platen.articles;
 
-import de.ina.ina_p_platen.classes.ArticlesUtils;
-import de.ina.ina_p_platen.classes.UserUtils;
-import de.ina.ina_p_platen.register.RegisterHelper;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -26,6 +22,21 @@ public class ArticlesServlet extends HttpServlet {
         else
             articlesHelper = (ArticlesHelper)session.getAttribute("articles-helper");
 
-        articlesHelper.doPost(request, response);
+        String method = request.getParameter("_method");
+
+        switch (method) {
+
+            case "ADD":
+                articlesHelper.doPost(request, response);
+                break;
+
+            case "DELETE":
+                articlesHelper.doDelete(request, response);
+                break;
+
+            case "CHANGE":
+                articlesHelper.doChange(request, response);
+                break;
+        }
     }
 }

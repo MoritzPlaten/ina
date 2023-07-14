@@ -1,5 +1,5 @@
-<%@ page import="de.ina.ina_p_platen.classes.MessageUtils" %>
-<%@ page import="de.ina.ina_p_platen.classes.Message" %>
+<%@ page import="de.ina.ina_p_platen.classes.message.MessageUtils" %>
+<%@ page import="de.ina.ina_p_platen.classes.message.Message" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -57,25 +57,16 @@
         .form-group button:hover {
             background-color: #45a049;
         }
-
-        .form-group .error-message {
-            color: #ff0000;
-            margin-top: 5px;
-        }
     </style>
 </head>
 <body>
 
     <%
-        //Benachrichtigungen werden hier abgefangen
-        Message messageBody = null;
-        String message = request.getParameter("message");
-        if (message != null) {
-            messageBody = MessageUtils.translateMessage(message);
-        }
+        //receive messages from login
+        Message message = MessageUtils.receiveMessage(request);
     %>
 
-    <%-- Einbinden der Toolbar --%>
+    <%-- Import toolbar --%>
     <jsp:include page="/snippets/Toolbar.jsp" />
 
     <div style="height: 40px"></div>
@@ -85,13 +76,13 @@
 
     <div style="height: 10px"></div>
 
-    <%-- Benachrichtigung werden hier angezeigt --%>
+    <%-- shows messages from login --%>
     <div style="display: flex;justify-items: center;justify-content: center">
-        <h4 style="color: indianred"><%=messageBody != null && messageBody.isError() ? messageBody.getMessage() : ""%></h4>
-        <h4 style="color: seagreen"><%=messageBody != null && !messageBody.isError() ? messageBody.getMessage() : ""%></h4>
+        <h4 style="color: indianred"><%=message != null && message.isError() ? message.getMessage() : ""%></h4>
+        <h4 style="color: seagreen"><%=message != null && !message.isError() ? message.getMessage() : ""%></h4>
     </div>
 
-    <%-- Login-Formular --%>
+    <%-- login form --%>
     <div style="width: 100%;display: flex;justify-items: center;justify-content: center">
 
         <div class="container">

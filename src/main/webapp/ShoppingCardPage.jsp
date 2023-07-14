@@ -1,6 +1,6 @@
 <%@ page import="de.ina.ina_p_platen.articles.ArticleBean" %>
-<%@ page import="java.util.ArrayList" %>
 <%@ page import="de.ina.ina_p_platen.login.UserBean" %>
+<%@ page import="de.ina.ina_p_platen.classes.article.Articles" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -84,22 +84,22 @@
 </head>
 <body>
 
-    <%-- Hinzufügen der Toolbar --%>
+    <%-- Shows toolbar --%>
 
     <jsp:include page="/snippets/Toolbar.jsp" />
 
     <%
-        //Warenkorb und aktuellen User abfragen
-        ArrayList<ArticleBean> shoppingCard = (ArrayList<ArticleBean>) session.getAttribute("shopping-card");
+        //receive shopping card list and the user
+        Articles shoppingCard = (Articles) session.getAttribute("shopping-card");
 
         HttpSession getSession = request.getSession();
         UserBean user = (UserBean) getSession.getAttribute("user");
     %>
 
-    <%-- Warenkorb ist gefüllt und vorhanden --%>
+    <%-- show shopping card --%>
     <% if (shoppingCard != null && !shoppingCard.isEmpty()) { %>
 
-        <%-- Wenn User angemeldet ist, soll ein Kauf-Button existieren --%>
+        <%-- show buy-button, only when user is logged in --%>
         <% if (user != null) { %>
 
         <div style="height: 30px"></div>
@@ -116,7 +116,7 @@
             <div style="width: 100px"></div>
         </div>
 
-        <%-- Wenn der User nicht angemeldet ist --%>
+        <%-- Shows when user is not logged in --%>
         <% } else { %>
 
         <div style="height: 10px"></div>
@@ -136,7 +136,7 @@
 
         <div style="height: 20px"></div>
 
-        <%-- Artikelliste --%>
+        <%-- articles --%>
         <table>
             <thead>
             <tr>
@@ -152,7 +152,7 @@
                 <td><%= article.getAmount() %></td>
                 <td>
 
-                    <%-- Artikel in den Warenkorb hinzufügen --%>
+                    <%-- delete articles from shopping card --%>
                     <form style="display: grid;" action="${pageContext.request.contextPath}/shopping-card-servlet" method="post">
                         <div style="display: flex; align-items: center;">
                             <input type="hidden" name="_method" value="DELETE">
@@ -166,7 +166,7 @@
             </tbody>
         </table>
 
-    <%-- Wenn der Warenkorb leer oder nicht vorhanden ist --%>
+    <%-- shows when the shopping card list is empty --%>
     <% } else { %>
 
     <div style="display: flex;justify-content: center;justify-items: center">

@@ -1,6 +1,8 @@
-package de.ina.ina_p_platen.classes;
+package de.ina.ina_p_platen.classes.shoppingCard;
 
 import de.ina.ina_p_platen.articles.ArticleBean;
+import de.ina.ina_p_platen.classes.article.Articles;
+import de.ina.ina_p_platen.classes.article.ArticlesUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -9,16 +11,15 @@ import java.util.ArrayList;
 public class ShoppingCardUtils {
 
     /**
-     * @param request HttpServletRequest vom Servlet
+     * @param session Get Session
      */
-    public static void initializeShoppingCard(HttpServletRequest request) {
+    public static void initializeShoppingCard(HttpSession session) {
 
-        HttpSession session = request.getSession();
-        ArrayList<ArticleBean> shoppingCard = (ArrayList<ArticleBean>) session.getAttribute("shopping-card");
+        Articles shoppingCard = (Articles) session.getAttribute("shopping-card");
 
         if (shoppingCard == null) {
 
-            ArrayList<ArticleBean> newShoppingCard = new ArrayList<>();
+            Articles newShoppingCard = new Articles();
             session.setAttribute("shopping-card", newShoppingCard);
         }
     }
