@@ -71,6 +71,11 @@ public class ShoppingCardHelper {
                         session.setAttribute("shopping-card", shoppingCard);
                     }
 
+                    if (article.getAmount() == 0) {
+                        articles.remove(article);
+                        servletContext.setAttribute("articles", articles);
+                    }
+
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/articles");
                     dispatcher.forward(request, response);
                 }
@@ -81,6 +86,11 @@ public class ShoppingCardHelper {
                     int newAmountInArticleList = article.getAmount() - desiredAmount;
                     ArticlesUtils.updateArticleAmount(articles, articleID, newAmountInArticleList);
                     servletContext.setAttribute("articles", articles);
+
+                    if (article.getAmount() == 0) {
+                        articles.remove(article);
+                        servletContext.setAttribute("articles", articles);
+                    }
 
                     //Artikel wird hier in dem Warenkorb hinzugefügt
                     ArticleBean addArticle = new ArticleBean();
@@ -121,20 +131,25 @@ public class ShoppingCardHelper {
             Articles shoppingCard = (Articles) session.getAttribute("shopping-card");
             Articles articles = (Articles) servletContext.getAttribute("articles");
 
-            ShoppingCardUtils.deleteArticleByID(shoppingCard, articleID);
-            session.setAttribute("shopping-card", shoppingCard);
-
             ArticleBean articleInShoppingCard = ArticlesUtils.getArticleByID(shoppingCard, articleID);
             ArticleBean articleInArticle = ArticlesUtils.getArticleByID(articles, articleID);
 
             if (articleInArticle != null && articleInShoppingCard != null) {
+
                 ArticlesUtils.updateArticleAmount(
                         articles,
                         articleID,
                         articleInArticle.getAmount() + articleInShoppingCard.getAmount()
                 );
                 servletContext.setAttribute("articles", articles);
+            } else if (articleInArticle == null && articleInShoppingCard != null) {
+
+                articles.add(articleInShoppingCard);
+                servletContext.setAttribute("articles", articles);
             }
+
+            ShoppingCardUtils.deleteArticleByID(shoppingCard, articleID);
+            session.setAttribute("shopping-card", shoppingCard);
 
             RequestDispatcher dispatcher = request.getRequestDispatcher("/shopping-card");
             dispatcher.forward(request, response);

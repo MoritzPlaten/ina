@@ -70,7 +70,6 @@ public class LoginHelper {
         }
     }
 
-    //TODO: Article ist auf 0 und nicht gelöscht
     public void doLogout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         HttpSession session = request.getSession();
